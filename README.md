@@ -15,7 +15,7 @@ flightify is flight booking automation application.
 - Clone this repository with "git clone https://github.com/sasili-adetunji/flightify.git"
 - run `cd flightify`
 - Install Virtual environement by running `pip install virtualenv`. This helps in isolating python packages from every project.
-- Create a vitual env by running `virtualenv venv`
+- Create a vitual env by running `python3 -m venv`
 - Activate virtual environment `source venv/bin/activate`
 - Edit the `.env.sample` file and save it as `.env` 
 - Install the dependencies by running `pip install -r requirements.txt`
