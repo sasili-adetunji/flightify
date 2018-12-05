@@ -15,7 +15,7 @@ router = OptionalSlashRouter()
 
 
 urlpatterns = [
-  url(r'^auth/token/$', views.JWTLogin.as_view(), name='apiv1_jwt_login'),
+  url(r'^auth/token/$', views.JWTLogin.as_view(), name='jwt_login'),
 ]
 
 router = DefaultRouter()

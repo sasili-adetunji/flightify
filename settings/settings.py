@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_nose',
     'rest_framework',
     'apps.account',
+    'apps.helpers'
 ]
 
 MIDDLEWARE = [
@@ -75,6 +77,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wsgi.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 25,
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'COERCE_DECIMAL_TO_STRING': False,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '5/minute'
+    }
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -87,6 +112,8 @@ if TESTING:
             'TEST_NAME': ':memory'
         }
     }
+    REST_FRAMEWORK.pop('DEFAULT_THROTTLE_CLASSES')
+    REST_FRAMEWORK.pop('DEFAULT_THROTTLE_RATES')
 else:
     DATABASES = {
         'default': {
@@ -99,9 +126,9 @@ else:
     }
 
 PASSWORD_HASHERS = [
-    # 'django.contrib.auth.hashers.Argon2PasswordHasher',
-    # 'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
-    # 'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
 ]
@@ -154,29 +181,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 25,
-    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
-    'COERCE_DECIMAL_TO_STRING': False,
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ),
-    'DEFAULT_THROTTLE_CLASSES': (
-        'rest_framework.throttling.AnonRateThrottle',
-    ),
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '5/minute'
-    }
-}
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=apps',
+]
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=3),

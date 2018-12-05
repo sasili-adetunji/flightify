@@ -84,10 +84,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_password(self, password):
         '''Validate password'''
-        if re.search(r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$_!%*?&]{8,}$)', password) is None:  
+        if re.search(r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$_!%*?&]{8,}$)', password) is not None:
             return password
         raise serializers.ValidationError(
-            'Must have at least 1 uppercase, 1 lowercase, 1 number & 1 special character'
+            'Must have at least 1 uppercase, 1 lowercase, 1 number & 1 special character and 8 characters minimum'
         )
 
     def create(self, validated_data):

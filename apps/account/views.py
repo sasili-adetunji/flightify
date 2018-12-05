@@ -45,5 +45,4 @@ class JWTLogin(JSONWebTokenAPIView):
                 status=status.HTTP_200_OK,
                 message='User login Successfully.'
             )
-
-        raise exceptions.AuthenticationFailed(detail=serializer.errors)
+        raise exceptions.ValidationError(detail=serializer.errors)
