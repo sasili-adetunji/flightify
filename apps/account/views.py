@@ -30,6 +30,14 @@ class UserViewSet(viewsets.ViewSet):
             message='User Account Created Successfully.'
         )
 
+    # @decorators.action(detail=False, methods=['post'], url_path='activate/(?P<key>.+)')
+    # def confirm_user(self, request, **kwargs):
+    #     ''' views to confirm a new user'''
+    #     return APIResponse(
+    #         accounts_services.confirm_user(key=kwargs.get('key')),
+    #         status=status.HTTP_200_OK,
+    #         message='User Account Activated Successfully.'
+    #     )
 
 class JWTLogin(JSONWebTokenAPIView):
 
