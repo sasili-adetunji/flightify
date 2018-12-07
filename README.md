@@ -1,25 +1,27 @@
 # flightify
 flightify is flight booking automation application.
 
-### Features of Micro-Learning
+### Features of Fightify
 - Signup with the user details
+- Email confirmation to activate an account
 - Login with email and password
-- upload passport photographs
-- book tickets
-- receive tickets as an email
-- check the status of their flight
-- make flight reservations
-- purchase tickets
+- Upload passport photographs
+- Book tickets
+- Receive tickets as an email
+- Check the status of their flight
+- Make flight reservations
+- Purchase tickets
 
 ### Installation Guide
 - Clone this repository with "git clone https://github.com/sasili-adetunji/flightify.git"
 - run `cd flightify`
-- Install Virtual environement by running `pip install virtualenv`. This helps in isolating python packages from every project.
+- Install Virtual environement by running `pip install virtualenv`. This helps in isolating python packages from every project. This makes projects with conflicting dependecies to coeexist peacefully
 - Create a vitual env by running `python3 -m venv`
 - Activate virtual environment `source venv/bin/activate`
 - Edit the `.env.sample` file and save it as `.env` 
 - Install the dependencies by running `pip install -r requirements.txt`
 - Start the app by running `python manage.py runserver`
+- Run test by running `python ../manage.py test`
 - Navigate to `localhost:8000`
 
 ### Technologies
