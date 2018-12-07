@@ -3,18 +3,20 @@ from rest_framework import (
     serializers,
     validators
 )
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from rest_framework_jwt.serializers import (
     JSONWebTokenSerializer
 )
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
-FAILED_LOGIN_MESSAGE = _('Unable to log in because the username or password is invalid')
+FAILED_LOGIN_MESSAGE = _('Unable to log in because the username or password is invalid or not active')
 
 class CustomJSONWebTokenSerializer(JSONWebTokenSerializer):
 
@@ -27,7 +29,7 @@ class CustomJSONWebTokenSerializer(JSONWebTokenSerializer):
         }
         if all(credentials.values()):
             user = authenticate(**credentials)
-
+            
             if user:
                 payload = jwt_payload_handler(user)
 
@@ -40,6 +42,17 @@ class CustomJSONWebTokenSerializer(JSONWebTokenSerializer):
         else:
             raise serializers.ValidationError(FAILED_LOGIN_MESSAGE)
 
+class UsersSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+        )
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -100,5 +113,6 @@ class UserSerializer(serializers.ModelSerializer):
             last_name=validated_data['last_name']
         )
         user.set_password(validated_data['password'])
+        user.is_active = False
         user.save()
         return user

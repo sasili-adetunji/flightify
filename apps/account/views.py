@@ -10,6 +10,8 @@ from rest_framework import (
     decorators,
     status
 )
+from . import serializers as account_serializer
+
 from datetime import datetime
 from . import (
     services as accounts_services
@@ -30,6 +32,15 @@ class UserViewSet(viewsets.ViewSet):
             message='User Account Created Successfully.'
         )
 
+    @decorators.action(detail=False, methods=['get'], url_path='activate/(?P<key>.+)')
+    def confirm_user(self, request, **kwargs):
+        ''' views to confirm a new user'''
+        response = accounts_services.confirm_user(key=kwargs.get('key'))
+        return APIResponse(
+            account_serializer.UsersSerializer(response).data,
+            status=status.HTTP_200_OK,
+            message='User Account Activated Successfully.'
+        )
 
 class JWTLogin(JSONWebTokenAPIView):
 

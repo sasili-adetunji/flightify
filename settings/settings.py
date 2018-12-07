@@ -15,8 +15,16 @@ from decouple import config
 import sys
 import datetime
 
+import environ
+
+
+root = environ.Path(__file__) - 2
+
+
+BASE_DIR = root
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,6 +32,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
+
+# for 
+SECURITY_PASSWORD_SALT = config('SECURITY_PASSWORD_SALT')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
@@ -42,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_nose',
     'rest_framework',
     'apps.account',
@@ -59,10 +71,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'urls.urls'
 
+shared_templates_dir = '{}/templates'.format(str(root.path()))
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+                # os.path.join(BASE_DIR, 'templates')
+                'templates', shared_templates_dir
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -181,6 +199,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT')
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -202,3 +225,9 @@ JWT_AUTH = {
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'account.CustomUser'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = 'tmp/emailMessages/'
+SITE_ID = 1

@@ -1,0 +1,12 @@
+Dear {{ user.username }},
+
+You recently registered on flightify with the email {{ user.email }}.
+
+Click on the following link to activate your account.
+
+
+{{ link }} Link
+
+Regards,
+
+The Flightify admin

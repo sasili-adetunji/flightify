@@ -1,8 +1,13 @@
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
+from django.contrib.auth import get_user_model
+from unittest.mock import patch, ANY
+from apps.helpers.token import generate_confirmation_token, confirm_token
+from django.core.mail import send_mail
 
+User = get_user_model()
 
 class SignupTest(APITestCase):
 
@@ -231,7 +236,8 @@ class SignupTestValid(SignupTest):
     Test class for valid signup.
     """
 
-    def test_signup_with_valid_credentials(self):
+    @patch('apps.helpers.email_helper.send_mail')
+    def test_signup_with_valid_credentials(self, send_mail):
   
         '''Signup a User - VALID :- When a valid credentials are is used to signup '''
         
@@ -249,3 +255,37 @@ class SignupTestValid(SignupTest):
             response.data.get('payload')['username'],
             data['username']
         )
+
+    @patch('apps.helpers.email_helper.send_mail')
+    def test_confirm_user(self, send_mail):
+  
+        '''Activate  and send email a User - VALID :- When a valid credentials are is used to signup '''
+        
+        data = self.data.copy()
+        signup = self.client.post(
+            reverse('accounts-create-user'),
+            data
+        )
+        key = generate_confirmation_token(signup.data.get('payload')['email'])
+        response = self.client.get(
+            reverse('accounts-confirm-user',  args=[key]),
+            data
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data.get('message'),
+            'User Account Activated Successfully.')
+        self.assertContains(response, 'user', status_code=status.HTTP_200_OK)
+        self.assertEqual(
+            response.data.get('payload')['email'],
+            signup.data.get('payload')['email']
+        )
+        self.assertEqual(
+            confirm_token(key),
+            signup.data.get('payload')['email']
+        )
+        self.assertEquals(send_mail.call_count, 1)
+
+        args, kwargs = send_mail.call_args_list[0]
+        self.assertEquals(args[0], 'Email confirmation on Flightify')
+        self.assertEquals(args[3], [signup.data.get('payload')['email']])
