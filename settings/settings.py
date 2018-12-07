@@ -15,8 +15,16 @@ from decouple import config
 import sys
 import datetime
 
+import environ
+
+
+root = environ.Path(__file__) - 2
+
+
+BASE_DIR = root
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -45,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_nose',
     'rest_framework',
     'apps.account',
@@ -62,10 +71,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'urls.urls'
 
+shared_templates_dir = '{}/templates'.format(str(root.path()))
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+                # os.path.join(BASE_DIR, 'templates')
+                'templates', shared_templates_dir
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -210,3 +225,9 @@ JWT_AUTH = {
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'account.CustomUser'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = 'tmp/emailMessages/'
+SITE_ID = 1

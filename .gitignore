@@ -1,3 +1,4 @@
 .env
 apps/.coverage
 .pytest_cache
+tmp
