@@ -47,14 +47,39 @@ class UploadViewSet(viewsets.ViewSet):
                 message='Upload successfully retrieved.'
               )
 
+    def retrieve(self, request, pk):
+        ''' views to retrieve a file'''
+  
+        file = file_services.retrieve_file(
+            request.user,
+            file_pk=pk
+        )
+        return APIResponse(file_serializers.FileSerializer(file).data,
+                status=status.HTTP_200_OK,
+                message='file successfully retrieved.'
+              )
+
+    def update(self, request, pk, **kwargs):
+        ''' views to update a file'''
+  
+        file = file_services.update_file(
+                request.user,
+                profile_pk=request.user.pk,
+                file_pk=pk,
+                description=request.data.get('description', ''),
+                files=request.FILES,
+        )
+        return APIResponse(file,
+                status=status.HTTP_200_OK,
+                message='file successfully updated.'
+              )
+
     @decorators.action(detail=False, methods=['get'], url_path='download/(?P<key>.*)')
     def download_file(self, request, **kwargs):
-        file_key = kwargs.get('key', '')
-        # if file_key is None:
-        #     raise BadRequest()
+        ''' views to dowwnload a file'''
 
         url = file_services.retrieve_file_url(
             request.user,
-            file_key=file_key,
+            file_key=kwargs.get('key', ''),
         )
         return APIResponse({'signed_url': url})

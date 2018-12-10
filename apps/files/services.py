@@ -65,6 +65,26 @@ def s3_get_bucket(bucket_name):
     bucket = s3.Bucket(bucket_name)
     return bucket
 
+def s3_delete(filekeys):
+
+    bucket = s3_get_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+    objects = []
+
+    objects.append({'Key': filekeys})
+    try:
+        response = bucket.delete_objects(
+            Delete={
+                'Objects': objects,
+                'Quiet': False
+            }
+        )
+
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            return True
+        else:
+            return False
+    except:
+        return False
 
 def s3_get_client():
     try:
@@ -211,6 +231,69 @@ def list_files(requestor, profile_pk):
         })
 
     return result
+
+def retrieve_file(requestor, *, file_pk):
+  
+    return File.objects.get(pk=file_pk)
+
+# def update_file(requestor, *, file_pk):
+  
+def update_file(
+    requestor,
+    *,
+    profile_pk,
+    file_pk,
+    description,
+    files,
+):
+    """ Update file """
+    retrieved_file = File.objects.get(pk=file_pk,uploader=profile_pk)
+
+    with transaction.atomic():
+        if len(files) > 0:
+            for file_object in files.values():
+                filename = file_object.name
+                file_object = file_object.content_type
+        else:
+            filename = retrieved_file.name
+            file_object = retrieved_file.type
+
+        if description != '':
+            description = description
+        else:
+            description = retrieved_file.description
+
+        payload ={
+            'name': filename,
+            'type': file_object,
+            'description': description,
+        }
+        serializer = FileSerializer(retrieved_file, data= payload, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            file_entry = serializer.save()
+
+        file_key = make_file_key(
+          profile_pk, filename, file_entry.id
+        )
+        s3_delete(retrieved_file.s3_key)
+        # upload file into s3 bucket
+        s3_upload(
+            filekey=file_key,
+            filebody=file_object,
+            filename=filename,
+            uploader_pk=requestor.pk,
+            description=description
+        )
+        
+        # update file instance with generated file key
+        serializer = FileSerializer(
+            file_entry, data={'s3_key': file_key}, partial=True
+        )
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+        return serializer.data
 
 def s3_presigned_url(file_key):
     # generate signed download url
