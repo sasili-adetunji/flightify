@@ -10,28 +10,11 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.generics import get_object_or_404
-import re
 
 
 def make_file_key(profile, filename, file_id):
     """Make unique key for file storage on s3"""
     return 'user/{}/{}/{}'.format(profile, file_id, filename)
-
-FILE_KEY_RE = re.compile(r'^user/(?P<profile>\d+)/(?P<file_id>[a-z_\-]+)/(?P<filename>.+)$')
-
-
-def parse_file_key(file_key):
-    match = FILE_KEY_RE.match(file_key)
-    import pdb; pdb.set_trace()
-    if match is not None:
-        return {
-            'profile': int(match.group('profile')),
-            'file_id': match.group('file_id'),
-            'filename': match.group('filename'),
-            'raw': file_key
-        }
-    return None
-
 
 def s3_encode_metadata(s):
     out_string = ''
@@ -103,6 +86,17 @@ def s3_get_client():
         print("Couldn't establish S3 client connection: ", e)
         return None
 
+def s3_presigned_url(file_key):
+    # generate signed download url
+    s3client = s3_get_client()
+    url = s3client.generate_presigned_url(
+        ClientMethod='get_object',
+        Params={
+            'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+            'Key': file_key
+        }
+    )
+    return url
 
 def s3_upload(*, filekey, filebody, filename, uploader_pk, description):
 
@@ -119,7 +113,6 @@ def s3_upload(*, filekey, filebody, filename, uploader_pk, description):
         content_encoding = ''
 
     # Upload file object to bucket
-    # put_object retained for backwards compatibility with the docstore model
     if hasattr(filebody, 'read'):
         bucket.upload_fileobj(
             filebody,
@@ -150,15 +143,6 @@ def s3_upload(*, filekey, filebody, filename, uploader_pk, description):
     )
     return s3obj
 
-
-def get_file_url(requestor, file_id):
-    """ Get file url """
-    try:
-        retrieved_file = File.objects.get(id=file_id)
-    except ObjectDoesNotExist:
-        return 'Does not exist'
-
-    return s3_presigned_url(retrieved_file.s3_key)
 
 
 def upload_files(
@@ -217,26 +201,22 @@ def list_files(requestor, profile_pk):
     )
     for file in files:
         result.append({
-            'filename': file.name,
-            'uploader': file.uploader.get_full_name(),
-            'created_at': file.created_at,
-            'metadata': {
-                'uploader_pk': str(file.uploader.pk),
-                'description': file.description,
-                'filename': file.name
-            },
-            'description': file.description,
-            'type': file.type,
-            's3_key': file.s3_key,
+            'file': FileSerializer(file).data,
+            'presigned_url': s3_presigned_url(file.s3_key),
+
         })
 
     return result
 
 def retrieve_file(requestor, *, file_pk):
-  
-    return File.objects.get(pk=file_pk)
 
-# def update_file(requestor, *, file_pk):
+    file = File.objects.get(pk=file_pk)
+    url = s3_presigned_url(file.s3_key)
+    return {
+      'file': FileSerializer(file).data,
+      'presigned_url': url,
+    }
+
   
 def update_file(
     requestor,
@@ -295,17 +275,12 @@ def update_file(
 
         return serializer.data
 
-def s3_presigned_url(file_key):
-    # generate signed download url
-    s3client = s3_get_client()
-    url = s3client.generate_presigned_url(
-        ClientMethod='get_object',
-        Params={
-            'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
-            'Key': file_key
-        }
-    )
-    return url
+def delete_file(requestor, *, profile_pk, file_pk):
+    """ Delete file """
 
-def retrieve_file_url(requestor, *, file_key):
-    return s3_presigned_url(file_key)
+    retrieved_file = File.objects.get(pk=file_pk,uploader=profile_pk)
+
+    s3_delete(retrieved_file.s3_key)
+
+    return retrieved_file.delete()
+
