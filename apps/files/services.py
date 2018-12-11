@@ -208,7 +208,7 @@ def list_files(requestor, profile_pk):
 
     return result
 
-def retrieve_file(requestor, *, file_pk):
+def retrieve_file(requestor, file_pk):
 
     file = File.objects.get(pk=file_pk)
     url = s3_presigned_url(file.s3_key)
@@ -275,7 +275,7 @@ def update_file(
 
         return serializer.data
 
-def delete_file(requestor, *, profile_pk, file_pk):
+def delete_file(requestor,profile_pk, file_pk):
     """ Delete file """
 
     retrieved_file = File.objects.get(pk=file_pk,uploader=profile_pk)
@@ -283,4 +283,83 @@ def delete_file(requestor, *, profile_pk, file_pk):
     s3_delete(retrieved_file.s3_key)
 
     return retrieved_file.delete()
+
+
+
+class MockS3Obj(object):
+
+    def __init__(self, *, filekey, filebody, content_type):
+        self.key = filekey
+        self.content = filebody
+        self.content_length = len(filebody)
+        self.content_type = content_type
+        self.metadata = {}
+
+
+class MockStore(object):
+    """ S3 Mock API calls. We know it's working if we can run the unit tests without having to configure settings.S3_SECRET_KEY """
+    def __init__(self):
+        self.store = {}
+
+    def mock_upload(self, *, filekey, filebody, filename, uploader_pk, description):
+
+        if filename.endswith('.jpg'):
+            content_type = 'image/jpeg'
+        else:
+            content_type = 'application/binary'
+
+        s3obj = MockS3Obj(filekey=filekey, filebody=filebody, content_type=content_type)
+        self.store[filekey] = s3obj
+
+        return s3obj
+
+    def mock_delete(self, filekeys):
+
+        keys = []
+
+        for key in filekeys:
+            if key.startswith('/'):
+                filekey = key[1:]
+            else:
+                filekey = key
+
+            if filekey in self.store:
+                keys.append(filekey)
+            else:
+                # We asked to delete a non-existent S3Obj
+                return False
+
+        print(self.store)
+        for key in keys:
+            del self.store[key]
+
+        with transaction.atomic():
+            for key in keys:
+                file = DocstoreFile.objects.filter(s3_key=key)
+                if file.count():
+                    file.delete()
+                else:
+                    print("Couldn't find file {} in DocStoreFile table".format(key))
+
+        # NOTE(Jeroen): This return value goes unchecked because this entire call is wrapped an exception handler
+        # And the return value from the service layer calling this isn't even checked in the view.
+        return True
+
+    def mock_presigned_url(self, filekey):
+        if filekey not in self.store:
+            raise BadRequest()
+
+        result = "https://s3.{region}.amazonaws.com/{bucket}/{file}/" \
+            "?X-Amz-Credential={access}%2F{date}%2F{region}%2Fs3%2Faws4_request&X-Amz-Date={datetime}" \
+            "&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Algorithm=AWS4-HMAC-SHA256" \
+            "&X-Amz-Signature=d8aa92b4732905b5b61713b2126d7b5a46e2534f1158b1ba6829f9e1bc98f877".format(
+                region=settings.S3_REGION,
+                bucket=settings.S3_BUCKET_NAME,
+                access='currently-unchecked',
+                # access=settings.S3_ACCESS_KEY,
+                date='20180815',
+                datetime='20180815T133552Z',
+                file=filekey
+            )
+        return result
 
