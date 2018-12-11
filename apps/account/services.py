@@ -10,6 +10,7 @@ from rest_framework import (
     exceptions
 )
 from apps.helpers.email_helper import send_signup_confirmation
+from apps.helpers.tasks import send_signup_email_task
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -21,7 +22,8 @@ def create_new_user(*, data):
     with transaction.atomic():
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        send_signup_confirmation(data)
+        # send_signup_confirmation(data)
+        send_signup_email_task.delay(data)
     return serializer.data
 
 
