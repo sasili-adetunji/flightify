@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<p>Dear {{ user.username }}</p>
+<p> You recently registered on Flightify with the email {{ user.email }} </p>
+<p> Click on the following link to activate your account. </p>
+<table>
+    <tr valign="top">
+        <td>
+                {{ site }}{% url 'accounts-confirm-user' key=link %}  
+                <a href="{{ site }}{% url 'accounts-confirm-user' key=link %}" style="color:#0b82de;"> Click here to confirm your email </a><br /> 
+                <!-- <a href="{{ site }}{% url 'accounts-confirm-user' key=link %}"> Click here to confirm your email </a><br />  -->
+
+        </td>
+    </tr>
+</table>
+<p>Regards,</p>
+<p>The <code>Flightify</code> admin</p>
+</html>

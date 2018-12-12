@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/flightify
+    docker:
+      - image: circleci/python:3.6.4
+        environment:
+          DEBUG: $DEBUG
+          SECRET: $SECRET_KEY
+    steps:
+      # obtain repo from GitHub
+      - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - restore_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      # create virtual env and install dependencies
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -r requirements.txt
+
+      # save cache dependecies to save time between runs,
+      - save_cache:
+          paths:
+            - ./venv
+          key: deps9-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      #  run  tests
+      - run:
+          name: run tests
+          command: |
+            source venv/bin/activate
+            python manage.py test
+        
+      # store test results
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
+          destination: tr1
