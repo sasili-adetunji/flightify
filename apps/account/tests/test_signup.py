@@ -3,7 +3,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from apps.helpers.token import generate_confirmation_token, confirm_token
 from django.core.mail import send_mail
 
@@ -284,8 +284,4 @@ class SignupTestValid(SignupTest):
             confirm_token(key),
             signup.data.get('payload')['email']
         )
-        self.assertEquals(send_mail.call_count, 1)
 
-        args, kwargs = send_mail.call_args_list[0]
-        self.assertEquals(args[0], 'Email confirmation on Flightify')
-        self.assertEquals(args[3], [signup.data.get('payload')['email']])
