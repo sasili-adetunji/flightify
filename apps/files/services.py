@@ -155,11 +155,9 @@ def upload_files(
     """ Upload files """
     with transaction.atomic():
         for file_object in files.values():
-            filename = file_object.name
-
             serializer = FileSerializer(
                 data={
-                    'name': filename,
+                    'name': file_object.name,
                     'type': file_object.content_type,
                     'uploader': requestor.pk,
                     'description': description,
@@ -169,14 +167,14 @@ def upload_files(
                 file_entry = serializer.save()
 
             file_key = make_file_key(
-                profile_pk, filename, file_entry.id
+                profile_pk, file_object.name, file_entry.id
             )
 
             # upload file into s3 bucket
             s3_upload(
                 filekey=file_key,
                 filebody=file_object,
-                filename=filename,
+                filename=file_object.name,
                 uploader_pk=requestor.pk,
                 description=description
             )
@@ -211,10 +209,9 @@ def list_files(requestor, profile_pk):
 def retrieve_file(requestor, file_pk):
 
     file = File.objects.get(pk=file_pk)
-    url = s3_presigned_url(file.s3_key)
     return {
       'file': FileSerializer(file).data,
-      'presigned_url': url,
+      'presigned_url': s3_presigned_url(file.s3_key),
     }
 
   
@@ -291,7 +288,6 @@ class MockS3Obj(object):
     def __init__(self, *, filekey, filebody, content_type):
         self.key = filekey
         self.content = filebody
-        self.content_length = len(filebody)
         self.content_type = content_type
         self.metadata = {}
 
@@ -335,7 +331,7 @@ class MockStore(object):
 
         with transaction.atomic():
             for key in keys:
-                file = DocstoreFile.objects.filter(s3_key=key)
+                file = File.objects.filter(s3_key=key)
                 if file.count():
                     file.delete()
                 else:
@@ -353,10 +349,9 @@ class MockStore(object):
             "?X-Amz-Credential={access}%2F{date}%2F{region}%2Fs3%2Faws4_request&X-Amz-Date={datetime}" \
             "&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Algorithm=AWS4-HMAC-SHA256" \
             "&X-Amz-Signature=d8aa92b4732905b5b61713b2126d7b5a46e2534f1158b1ba6829f9e1bc98f877".format(
-                region=settings.S3_REGION,
-                bucket=settings.S3_BUCKET_NAME,
+                region=settings.AWS_REGION,
+                bucket=settings.AWS_STORAGE_BUCKET_NAME,
                 access='currently-unchecked',
-                # access=settings.S3_ACCESS_KEY,
                 date='20180815',
                 datetime='20180815T133552Z',
                 file=filekey
