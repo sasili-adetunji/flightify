@@ -15,20 +15,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='File',
+            name='Flight',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('type', models.CharField(max_length=255, verbose_name='MIME Type')),
-                ('s3_key', models.TextField(blank=True, null=True, verbose_name='S3 Key')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
+                ('depart_date', models.DateTimeField(verbose_name='Depart Date')),
+                ('return_date', models.DateTimeField(verbose_name='Return Date')),
+                ('departure', models.CharField(max_length=100, verbose_name='Departure')),
+                ('destination', models.CharField(max_length=100, verbose_name='Destination')),
+                ('fare', models.IntegerField(choices=[(0, 'One-Way'), (1, 'Round-Trip')], verbose_name='Fare')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated At')),
-                ('uploader', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='files_uploaded', to=settings.AUTH_USER_MODEL)),
+                ('passenger', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='passenger', to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-                'abstract': False,
-            },
         ),
     ]
