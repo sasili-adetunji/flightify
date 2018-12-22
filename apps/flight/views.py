@@ -1,6 +1,7 @@
 from rest_framework import (
     viewsets,
-    status
+    status,
+    decorators
 )
 from . import (
     services as flight_services
@@ -55,3 +56,16 @@ class FlightViewSet(viewsets.ViewSet):
                 status=status.HTTP_200_OK,
                 message='flight successfully updated.'
               )
+
+    @decorators.action(methods=['get'], detail=False, url_path='users/(?P<day>[0-9+\-]+)')
+    def list_users(self, request, **kwargs):
+        ''' View to list users for a particular on a specific day '''
+        users = flight_services.list_users(
+            requestor=request.user,
+            day=kwargs.get('day'),
+        ) 
+        return APIResponse(
+            users,
+            status=status.HTTP_200_OK,
+            message='flight successfully retrieved.'
+        )
