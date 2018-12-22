@@ -29,3 +29,10 @@ def book_tickets(requestor, data):
         result['flight_detail'] = flight_serializer.FlightSerializer(flight).data
 
     return result
+
+def ticket_status(requestor, flight_id):
+    '''Check status of a ticket'''
+
+    flight = Flight.objects.get(pk=flight_id)
+
+    return flight_serializer.FlightSerializer(flight).data
