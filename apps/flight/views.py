@@ -2,7 +2,6 @@ from rest_framework import (
     viewsets,
     status
 )
-from . import serializers as flight_serializers
 from . import (
     services as flight_services
 )

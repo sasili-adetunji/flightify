@@ -1,23 +1,43 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-import datetime
-
-User = get_user_model()
+from apps.flight.models import Flight
 
 
+class Passenger(models.Model):
 
-class Ticket(models.Model):
-    """ Ticket model definition """
-
-    description = models.TextField(
-        null=True, blank=True,
-        verbose_name="Description"
+    flight = models.ForeignKey(
+        Flight,
+        related_name="flight",
+        on_delete=models.PROTECT
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Created At'
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name='Updated At'
-    )
+
+    birth_date = models.DateField(
+        verbose_name='Date of birth')
+
+    phone = models.CharField(
+        max_length=50,
+        verbose_name='Phone')
+
+    passport_number = models.CharField(
+        max_length=50,
+        verbose_name='Passport')
+
+    contact_address = models.CharField(
+        max_length=255,
+        verbose_name='Address')
+
+    contact_kin_name = models.CharField(
+        max_length=255,
+        verbose_name='NOK Name')
+
+    contact_kin_relationship = models.CharField(
+        max_length=255,
+        verbose_name='Relationship')
+
+    contact_kin_phone = models.CharField(
+        max_length=255,
+        verbose_name='NOK Phone')
+
+    contact_kin_email = models.CharField(
+        max_length=255,
+        verbose_name='NOK E-mail')
+
