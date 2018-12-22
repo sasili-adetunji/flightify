@@ -40,6 +40,9 @@ class Flight(models.Model):
         choices=FARE_CHOICES,
         verbose_name='Fare')
 
+
+    booked = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Created At'

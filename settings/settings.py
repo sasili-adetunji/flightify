@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'apps.helpers',
     'apps.files',
     'apps.flight',
+    'apps.ticket',
 ]
 
 MIDDLEWARE = [
