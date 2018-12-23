@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<p>Dear {{ username }}</p>
+<p> You recently book a flight on Flightify </p>
+
+<table>
+    <tr valign="top">
+        <td>
+         <p>  Ticket Detail  </p> 
+
+          <p>  Birth Date: {{ result.ticket_detail.birth_date }}  </p>
+          <p>  {{ result.ticket_detail.phone }}  </p> 
+         <p>  Passport Number: {{ result.ticket_detail.passport_number }}  </p> 
+          <p>   Contact Address: {{ result.ticket_detail.contact_address }}  </p>
+         <p>  Name of next of kin: {{ result.ticket_detail.contact_kin_name }} </p> 
+          <p>   Relationship of next of kin: {{ result.ticket_detail.contact_kin_relationship }}  </p>
+          <p> Phone of next of kin: {{ result.ticket_detail.contact_kin_phone }}  </p>
+          <p>  Email of next of kin: {{ result.ticket_detail.contact_kin_email }}   </p>
+
+        </td>
+
+        <td>
+          <p>  Flight Detail  </p>
+
+         <p>   Fare type: {{ result.flight_detail.fare_name }} </p> 
+          <p>    Passenger Name: {{ result.flight_detail.passenger_name }}  </p>
+          <p> Depart date: {{ result.flight_detail.depart_date }} </p>
+          <p>  Return date: {{ result.flight_detail.return_date }}  </p>
+         <p>  Departure: {{ result.flight_detail.departure }}  </p> 
+          <p> Destination: {{ result.flight_detail.destination }}   </p>
+         <p>   Booked: {{ result.flight_detail.booked }}   </p>
+
+        </td>
+    </tr>
+</table>
+<p>Regards,</p>
+<p>The <code>Flightify</code> admin</p>
+</html>
