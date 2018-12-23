@@ -43,6 +43,11 @@ class Flight(models.Model):
 
     booked = models.BooleanField(default=False)
 
+    reminder_notification_sent_at = models.DateTimeField(
+        verbose_name='Reminder notification sent at',
+        null=True, blank=True
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Created At'
