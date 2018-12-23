@@ -1,0 +1,8 @@
+Dear {{ username }},
+
+This is to remind you of your flight to {{ departure }} will be due in the next 24 hours
+
+
+Regards,
+
+The Flightify admin
