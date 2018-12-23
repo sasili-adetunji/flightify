@@ -21,3 +21,18 @@ def send_signup_confirmation(user):
         [user['email']],
         html_message=msg_html,
     )
+
+
+def send_ticket_email(result):
+    email = result['ticket_detail']['user_email']
+    username = result['ticket_detail']['username']
+
+    msg_plain = render_to_string('ticket/ticket_email.txt', {'result': result, 'username': username})
+    msg_html = render_to_string('ticket/ticket_email.html', {'result': result, 'username': username})
+    send_mail(
+        'Ticket Email on Flightify',
+        msg_plain,
+        settings.EMAIL_HOST_USER,
+        [email],
+        html_message=msg_html,
+    )

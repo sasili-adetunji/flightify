@@ -1,0 +1,28 @@
+Dear {{ username }},
+
+You recently book a ticket on flightify 
+
+    Ticket Detail
+
+    Birth Date: {{ result.ticket_detail.birth_date }}
+    Phone: {{ result.ticket_detail.phone }}
+    Passport Number: {{ result.ticket_detail.passport_number }}
+    Contact Address: {{ result.ticket_detail.contact_address }}
+    Name of next of kin: {{ result.ticket_detail.contact_kin_name }}
+    Relationship of next of kin: {{ result.ticket_detail.contact_kin_relationship }}
+    Phone of next of kin: {{ result.ticket_detail.contact_kin_phone }}
+    Email of next of kin: {{ result.ticket_detail.contact_kin_email }}
+
+    Flight Detail
+
+    Fare type: {{ result.flight_detail.fare_name }}
+    Passenger Name: {{ result.flight_detail.passenger_name }}
+    Depart_date: {{ result.flight_detail.depart_date }}
+    Return_date: {{ result.flight_detail.return_date }}
+    Departure: {{ result.flight_detail.departure }}
+    Destination: {{ result.flight_detail.destination }}
+    Booked: {{ result.flight_detail.booked }}
+
+Regards,
+
+The Flightify admin

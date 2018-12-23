@@ -232,8 +232,8 @@ JWT_AUTH = {
 
 AUTH_USER_MODEL = 'account.CustomUser'
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = 'tmp/emailMessages/'
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = 'tmp/emailMessages/'
 SITE_ID = 1
 
 # S3 Credentials
