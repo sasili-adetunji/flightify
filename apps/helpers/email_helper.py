@@ -1,17 +1,18 @@
-from apps.helpers.token import generate_confirmation_token
-from django.core.mail import send_mail
-from django.conf import settings
-from django.template.loader import render_to_string
-from django.contrib.sites.models import Site
-from apps.flight.models import Flight
-from apps.ticket.models import Passenger
-from datetime import datetime
 import pytz
+from datetime import datetime
 from django.db import (
     transaction
 )
+from django.contrib.sites.models import Site
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.conf import settings
+from apps.helpers.token import generate_confirmation_token
+from apps.flight.models import Flight
+from apps.ticket.models import Passenger
 
 def send_signup_confirmation(user):
+    """ Email helper to send confirmation email to the user """
 
     site = Site.objects.first()
     site_domain = site.domain
@@ -29,6 +30,9 @@ def send_signup_confirmation(user):
 
 
 def send_ticket_email(result):
+
+    """ Email helper to send ticket email to the user when a ticket is booked"""
+
     email = result['ticket_detail']['user_email']
     username = result['ticket_detail']['username']
 
@@ -44,6 +48,11 @@ def send_ticket_email(result):
 
 
 def send_ticket_reminder():
+
+    """ 
+    Email helper to send reminder email to the user 
+    when departure date is less than 24hrs
+    """
 
     passengers = Passenger.objects.filter(
         flight__reminder_notification_sent_at__isnull=True,

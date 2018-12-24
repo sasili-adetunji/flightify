@@ -29,6 +29,7 @@ class BookTicketSerializer(serializers.ModelSerializer):
     def get_username(self, passenger):
         return passenger.flight.passenger.username
 
+
 class BookFlightTicketSerializer(serializers.ModelSerializer):
   
     ticket = BookTicketSerializer()
@@ -36,4 +37,3 @@ class BookFlightTicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Passenger
         fields = '__all__'
-

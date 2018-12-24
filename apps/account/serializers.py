@@ -3,7 +3,6 @@ from rest_framework import (
     serializers,
     validators
 )
-# from django.contrib.auth.models import User
 from rest_framework_jwt.serializers import (
     JSONWebTokenSerializer
 )
@@ -113,6 +112,6 @@ class UserSerializer(serializers.ModelSerializer):
             last_name=validated_data['last_name']
         )
         user.set_password(validated_data['password'])
-        user.is_active = False
+        user.is_active = False  # making is_active false when signing up until its activated
         user.save()
         return user

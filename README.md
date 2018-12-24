@@ -2,15 +2,23 @@
 flightify is flight booking automation application.
 
 ### Features of Fightify
-- Signup with the user details
-- Email confirmation to activate an account
-- Login with email and password
-- Upload passport photographs
-- Book tickets
-- Receive tickets as an email
-- Check the status of their flight
-- Make flight reservations
-- Purchase tickets
+- Registration POST `api/v1/accounts/signup/`
+- Activate an account `POST api/v1/accounts/activate/<activate_key>/`
+- Login POST `api/v1/auth/login/`
+- Upload a profile picture POST `api/v1/uploads/`
+- Update profile picture PUT `api/v1/uploads/<upload_id>/`
+- Delete profile picture DELETE `api/v1/uploads/<upload_id/`
+- Retrieve a profile picture GET `api/v1/uploads/<upload_id/`
+- Flight reservation POST `api/v1/flights/`
+- Get all Flight reservation GET `api/v1/flights/`
+- Retrive a single reserved flight GET `api/v1/flights/<flight_id>/`
+- Update reserved flight PUT `api/v1/flights/<flight_id>/`
+- Check the status of flight `api/v1/tickets/status/<flight_id>`
+- List and count all users for flight on a specific day GET `api/v1/flight/users/{day(yyyy-mm-day)/`
+- Book Ticket POST `api/v1/tickets/`
+- Receive tickets as an email when a flight is booked
+- Recieve a reminder email when a flight is due in 24hours
+
 
 ### Installation Guide
 - Clone this repository with "git clone https://github.com/sasili-adetunji/flightify.git"

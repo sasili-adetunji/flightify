@@ -1,13 +1,10 @@
 from django.db import (
     transaction
 )
-from rest_framework import exceptions
-from . import serializers as flight_serializer
-
+from apps.flight import serializers as flight_serializer
 from . import serializers as ticket_serializer
 from apps.ticket.models import Passenger
 from apps.flight.models import Flight
-from apps.helpers.email_helper import send_ticket_email
 from apps.helpers.tasks import send_ticket_email_task
 
 
@@ -23,13 +20,14 @@ def book_tickets(requestor, data):
         data=ticket_info
     )
     with transaction.atomic():
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             result['ticket_detail'] = serializer.data
         flight.booked= True
         flight.save()
         result['flight_detail'] = flight_serializer.FlightSerializer(flight).data
-        # send_ticket_email(result)
+
         send_ticket_email_task.delay(result)
 
     return result

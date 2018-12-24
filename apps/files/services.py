@@ -8,7 +8,6 @@ import boto3
 from botocore.client import Config
 from botocore.exceptions import ClientError
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.generics import get_object_or_404
 
 
@@ -337,13 +336,9 @@ class MockStore(object):
                 else:
                     print("Couldn't find file {} in DocStoreFile table".format(key))
 
-        # NOTE(Jeroen): This return value goes unchecked because this entire call is wrapped an exception handler
-        # And the return value from the service layer calling this isn't even checked in the view.
         return True
 
     def mock_presigned_url(self, filekey):
-        if filekey not in self.store:
-            raise BadRequest()
 
         result = "https://s3.{region}.amazonaws.com/{bucket}/{file}/" \
             "?X-Amz-Credential={access}%2F{date}%2F{region}%2Fs3%2Faws4_request&X-Amz-Date={datetime}" \
