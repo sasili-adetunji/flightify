@@ -3,6 +3,7 @@ from apps.flight.models import Flight
 
 
 class Passenger(models.Model):
+    """ Passenger model definition """
 
     flight = models.ForeignKey(
         Flight,

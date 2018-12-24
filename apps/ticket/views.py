@@ -8,7 +8,6 @@ from . import (
 )
 from apps.flight.serializers import FlightSerializer
 from apps.ticket.serializers import BookTicketSerializer
-
 from apps.helpers.response import APIResponse
 
 
@@ -25,6 +24,8 @@ class TicketViewSet(viewsets.ViewSet):
 
     @decorators.action(methods=['get'], detail=False, url_path='status/(?P<flight_id>[0-9+\-]+)')
     def ticket_status(self, request, **kwargs):
+        ''' views to check status of ticket'''
+
         ticket = ticket_services.ticket_status(
             request.user,
             flight_id=kwargs.get('flight_id'),

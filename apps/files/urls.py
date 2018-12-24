@@ -14,9 +14,7 @@ class OptionalSlashRouter(SimpleRouter):
 router = OptionalSlashRouter()
 
 
-urlpatterns = [
-
-]
+urlpatterns = []
 
 router = DefaultRouter()
 router.register(r'uploads', views.UploadViewSet, basename='uploads')
