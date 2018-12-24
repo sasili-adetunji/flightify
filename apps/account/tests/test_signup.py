@@ -249,7 +249,7 @@ class SignupTestValid(SignupTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
             response.data.get('message'),
-            'User Account Created Successfully.')
+            'User Account Created Successfully. Check your emaail to activate')
         self.assertContains(response, 'user', status_code=status.HTTP_201_CREATED)
         self.assertEqual(
             response.data.get('payload')['username'],

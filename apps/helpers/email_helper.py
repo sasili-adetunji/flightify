@@ -14,6 +14,10 @@ from apps.ticket.models import Passenger
 def send_signup_confirmation(user):
     """ Email helper to send confirmation email to the user """
 
+
+    obj=Site.objects.get(id=1)
+    obj.domain='localhost:8000'
+    obj.save()
     site = Site.objects.first()
     site_domain = site.domain
     link=generate_confirmation_token(user['email'])

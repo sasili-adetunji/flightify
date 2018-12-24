@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ViewSet):
         return APIResponse(
             accounts_services.create_new_user(data=request.data),
             status=status.HTTP_201_CREATED,
-            message='User Account Created Successfully.'
+            message='User Account Created Successfully. Check your emaail to activate'
         )
 
     @decorators.action(detail=False, methods=['get'], url_path='activate/(?P<key>.+)')
