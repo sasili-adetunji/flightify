@@ -10,19 +10,14 @@ from django.conf import settings
 from apps.helpers.token import generate_confirmation_token
 from apps.flight.models import Flight
 from apps.ticket.models import Passenger
+from django.conf import settings
 
 def send_signup_confirmation(user):
     """ Email helper to send confirmation email to the user """
 
-
-    obj=Site.objects.get(id=1)
-    obj.domain='localhost:8000'
-    obj.save()
-    site = Site.objects.first()
-    site_domain = site.domain
     link=generate_confirmation_token(user['email'])
-    msg_plain = render_to_string('account/confirm_signup.txt', {'user': user, 'link': link, 'site': site_domain})
-    msg_html = render_to_string('account/confirm_signup.html', {'user': user, 'link': link, 'site': site_domain})
+    msg_plain = render_to_string('account/confirm_signup.txt', {'user': user, 'link': link, 'site': settings.DOMAIN_NAME})
+    msg_html = render_to_string('account/confirm_signup.html', {'user': user, 'link': link, 'site': settings.DOMAIN_NAME})
 
     send_mail(
         'Email confirmation on Flightify',
