@@ -3,3 +3,4 @@ apps/.coverage
 .coverage
 .pytest_cache
 tmp
+apps/cover

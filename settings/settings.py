@@ -214,6 +214,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=apps',
+    '--cover-html'
 ]
 
 JWT_AUTH = {

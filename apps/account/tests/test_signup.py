@@ -229,6 +229,21 @@ class SignupTestExceptions(SignupTest):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertContains(response, 'Enter a valid email address.', status_code=400)  
 
+    @patch('apps.helpers.email_helper.send_mail')
+    def test_confirm_toke_invalid(self, send_mail):
+          
+        data = self.data.copy()
+        self.client.post(
+            reverse('accounts-create-user'),
+            data
+        )
+        key = 'ASSDJL324832580PIJ[48'
+        response = self.client.get(
+            reverse('accounts-confirm-user',  args=[key]),
+            data
+        )
+
+        self.assertContains(response, 'invalid token', status_code=500)
 
 class SignupTestValid(SignupTest):
 

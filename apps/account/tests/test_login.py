@@ -3,6 +3,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth import get_user_model
+from apps.account.models import CustomUser
 
 User = get_user_model()
 
@@ -128,4 +129,20 @@ class LoginTestValid(LoginTest):
         self.assertEqual(
             response.data.get('payload')['user']['username'],
             data['username']
+        )
+
+    def test_return_full_name_on_login(self):
+        '''
+        Login a User - VALID :- When a valid username and password return full name
+        '''
+
+        data = self.data.copy()
+        response = self.client.post(
+            reverse('jwt_login'),
+            data
+        )
+        user = CustomUser.objects.get(pk=response.data.get('payload')['user']['id'])
+        self.assertEqual(
+            user.get_full_name(),
+            'Test User'
         )

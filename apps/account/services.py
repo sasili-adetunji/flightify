@@ -38,14 +38,14 @@ def confirm_user(*, key):
 
     if response:
         user = get_object_or_404(User, email=response)
-        if user.is_active == False:
-            user.is_active = True
-            user.save()
-            return user
+        # if user.is_active == False:
+        user.is_active = True
+        user.save()
+        return user
 
         # If user is already active, simply retun user
-        else:
-            return user
+        # else:
+        #     return user
 
     # invalid token
     raise exceptions.APIException('invalid token')
