@@ -84,7 +84,8 @@ class TicketTestValid(TicketTest):
     Test class for valid ticket reservation.
     """
 
-    def test_create_flight_reservation(self):
+    @patch('apps.helpers.email_helper.send_mail')
+    def test_create_flight_reservation(self, send_mail):
 
 
         flight_data = self.flight_data.copy()

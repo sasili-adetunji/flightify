@@ -15,7 +15,7 @@ logger = get_task_logger(__name__)
 def send_signup_email_task(user):
     """sends an email when signup form is filled successfully"""
 
-    logger.info("Sent signup email")
+    # logger.info("Sent signup email")
     return send_signup_confirmation(user)
 
 
@@ -23,7 +23,7 @@ def send_signup_email_task(user):
 def send_ticket_email_task(result):
     """sends an email when a ticket is booked"""
 
-    logger.info("Sent ticket email")
+    # logger.info("Sent ticket email")
     return send_ticket_email(result)
 
 @periodic_task(
@@ -36,5 +36,5 @@ def task_send_email_reminder():
     Sends email notification to users 24hours before departure
     """
 
-    logger.info("Flight reminder sent")
+    # logger.info("Flight reminder sent")
     return send_ticket_reminder()

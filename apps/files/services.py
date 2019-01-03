@@ -18,7 +18,7 @@ def make_file_key(profile, filename, file_id):
 def s3_encode_metadata(s):
     out_string = ''
     for c in s:
-        if ord(c) == 92:  # character = \
+        if ord(c) == 92:
             out_string += '\\0x5c\\'
         elif ord(c) > 127:
             safe_ord = str(hex(ord(c)))
@@ -53,37 +53,37 @@ def s3_delete(filekeys):
     objects = []
 
     objects.append({'Key': filekeys})
-    try:
-        response = bucket.delete_objects(
-            Delete={
-                'Objects': objects,
-                'Quiet': False
-            }
-        )
+    # try:
+    response = bucket.delete_objects(
+        Delete={
+            'Objects': objects,
+            'Quiet': False
+        }
+    )
 
-        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
-            return True
-        else:
-            return False
-    except:
-        return False
+    if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        return True
+        # else:
+        #     return False
+    # except:
+    #     return False
 
 def s3_get_client():
-    try:
-        client = boto3.client(
-            's3',
-            settings.AWS_REGION,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            config=Config(
-                signature_version='s3v4',
-                s3={'addressing_style': 'path'}
-            )
+    # try:
+    client = boto3.client(
+        's3',
+        settings.AWS_REGION,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        config=Config(
+            signature_version='s3v4',
+            s3={'addressing_style': 'path'}
         )
-        return client
-    except ClientError as e:
-        print("Couldn't establish S3 client connection: ", e)
-        return None
+    )
+    return client
+    # except ClientError as e:
+    #     print("Couldn't establish S3 client connection: ", e)
+    #     return None
 
 def s3_presigned_url(file_key):
     # generate signed download url
@@ -289,67 +289,3 @@ class MockS3Obj(object):
         self.content = filebody
         self.content_type = content_type
         self.metadata = {}
-
-
-class MockStore(object):
-    """ S3 Mock API calls. We know it's working if we can run the unit tests without having to configure settings.S3_SECRET_KEY """
-    def __init__(self):
-        self.store = {}
-
-    def mock_upload(self, *, filekey, filebody, filename, uploader_pk, description):
-
-        if filename.endswith('.jpg'):
-            content_type = 'image/jpeg'
-        else:
-            content_type = 'application/binary'
-
-        s3obj = MockS3Obj(filekey=filekey, filebody=filebody, content_type=content_type)
-        self.store[filekey] = s3obj
-
-        return s3obj
-
-    def mock_delete(self, filekeys):
-
-        keys = []
-
-        for key in filekeys:
-            if key.startswith('/'):
-                filekey = key[1:]
-            else:
-                filekey = key
-
-            if filekey in self.store:
-                keys.append(filekey)
-            else:
-                # We asked to delete a non-existent S3Obj
-                return False
-
-        print(self.store)
-        for key in keys:
-            del self.store[key]
-
-        with transaction.atomic():
-            for key in keys:
-                file = File.objects.filter(s3_key=key)
-                if file.count():
-                    file.delete()
-                else:
-                    print("Couldn't find file {} in DocStoreFile table".format(key))
-
-        return True
-
-    def mock_presigned_url(self, filekey):
-
-        result = "https://s3.{region}.amazonaws.com/{bucket}/{file}/" \
-            "?X-Amz-Credential={access}%2F{date}%2F{region}%2Fs3%2Faws4_request&X-Amz-Date={datetime}" \
-            "&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Algorithm=AWS4-HMAC-SHA256" \
-            "&X-Amz-Signature=d8aa92b4732905b5b61713b2126d7b5a46e2534f1158b1ba6829f9e1bc98f877".format(
-                region=settings.AWS_REGION,
-                bucket=settings.AWS_STORAGE_BUCKET_NAME,
-                access='currently-unchecked',
-                date='20180815',
-                datetime='20180815T133552Z',
-                file=filekey
-            )
-        return result
-

@@ -11,12 +11,8 @@ from django.conf import settings
 from rest_framework_jwt import utils
 import time
 
-from apps.files.services import MockStore
 from apps.files import services as file_services
 User = get_user_model()
-
-
-mockstore = MockStore()
 
 def generate_token(user):
     assert(isinstance(user, User))
@@ -27,18 +23,9 @@ def generate_token(user):
     return '{0} {1}'.format(settings.JWT_AUTH['JWT_AUTH_HEADER_PREFIX'], token)
 
 
-@patch(
-    'apps.files.services.s3_presigned_url',
-    new=mockstore.mock_presigned_url
-)
-@patch(
-    'apps.files.services.s3_upload',
-    new=mockstore.mock_upload
-)
-@patch(
-    'apps.files.services.s3_delete',
-    new=mockstore.mock_delete
-)
+@patch('apps.files.services.s3_presigned_url')
+@patch('apps.files.services.s3_upload')
+@patch('apps.files.services.s3_delete')
 class FileUploadTest(APITestCase):
 
     """

@@ -1,0 +1,6 @@
+[report]
+omit=
+    */.virtualenvs/flight_booking_app/*
+    */venv/*
+    */.tox/*
+    */migrations/*

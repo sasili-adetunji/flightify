@@ -1,6 +1,9 @@
 .env
 apps/.coverage
-.coverage
-.pytest_cache
+.pytest_cache/
 tmp
 apps/cover
+.tox/
+cover
+.cache
+*.cover

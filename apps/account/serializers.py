@@ -38,8 +38,8 @@ class CustomJSONWebTokenSerializer(JSONWebTokenSerializer):
                 }
             else:
                 raise serializers.ValidationError(FAILED_LOGIN_MESSAGE)
-        else:
-            raise serializers.ValidationError(FAILED_LOGIN_MESSAGE)
+        # else:
+        #     raise serializers.ValidationError(FAILED_LOGIN_MESSAGE)
 
 class UsersSerializer(serializers.ModelSerializer):
 

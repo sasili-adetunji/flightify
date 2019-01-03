@@ -11,12 +11,9 @@ from django.conf import settings
 from rest_framework_jwt import utils
 import time
 
-from apps.files.services import MockStore
 from apps.files import services as file_services
 User = get_user_model()
 
-
-mockstore = MockStore()
 
 def generate_token(user):
     assert(isinstance(user, User))
