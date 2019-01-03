@@ -32,9 +32,9 @@ jobs:
           name: run tests
           command: |
             source venv/bin/activate
-            python manage.py test apps
+            python manage.py test
           override:
-              - coverage run --source=apps manage.py test
+              - coverage run manage.py test apps
           post:
               - coveralls
       # store test results

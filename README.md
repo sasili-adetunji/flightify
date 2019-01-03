@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/github/sasili-adetunji/flightify/badge.svg?branch=master)](https://coveralls.io/github/sasili-adetunji/flightify?branch=develop)  [![CircleCI](https://circleci.com/gh/sasili-adetunji/flightify.svg?style=svg)](https://circleci.com/gh/sasili-adetunji/flightify)
+
+
 # flightify
 flightify is flight booking automation application.
 
