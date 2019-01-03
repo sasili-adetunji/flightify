@@ -7,3 +7,4 @@ apps/cover
 cover
 .cache
 *.cover
+*__pycache__

@@ -1,6 +1,5 @@
-[report]
+[run]
 omit=
-    */.virtualenvs/flight_booking_app/*
-    */venv/*
+    */.virtualenvs/flightBooking/*
     */.tox/*
     */migrations/*
