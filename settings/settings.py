@@ -269,3 +269,5 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Africa/Nairobi'
 
 DOMAIN_NAME = config('DOMAIN_NAME', 'localhost:8000')
+
+AWS_DEFAULT_ACL = None
