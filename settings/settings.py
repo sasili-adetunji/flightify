@@ -41,7 +41,11 @@ SECURITY_PASSWORD_SALT = config('SECURITY_PASSWORD_SALT')
 DEBUG = config('DEBUG', cast=bool)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'https://flightify.herokuapp.com/',
+    'localhost', 
+    '127.0.0.1',
+]
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
