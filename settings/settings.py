@@ -42,7 +42,7 @@ DEBUG = config('DEBUG', cast=bool)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = [
-    'https://flightify.herokuapp.com/',
+    'flightify.herokuapp.com',
     'localhost', 
     '127.0.0.1',
 ]
@@ -265,13 +265,18 @@ STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 DEFAULT_FILE_STORAGE = 'apps.files.storage_backends.MediaStorage'  # <-- here is where we reference it
 
 # CELERY STUFF
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+BROKER_URL = config('REDIS_URL', default='redis://localhost:6379')
+CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://localhost:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
+CELERY_TIMEZONE = 'Africa/Lagos'
+
 
 DOMAIN_NAME = config('DOMAIN_NAME', 'localhost:8000')
 
 AWS_DEFAULT_ACL = None
+
+ADMINS = (
+    ('Sasiliyu Adetunji', 'sasiliyu.adetunji@andela.com'),
+)
