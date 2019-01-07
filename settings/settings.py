@@ -14,6 +14,7 @@ import os
 from decouple import config
 import sys
 import datetime
+import dj_database_url
 
 import environ
 
@@ -138,14 +139,17 @@ if TESTING:
     REST_FRAMEWORK.pop('DEFAULT_THROTTLE_RATES')
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'HOST': config('DB_HOST'),
-            'PORT': '',
-        }
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #     'NAME': config('DB_NAME'),
+        #     'USER': config('DB_USER'),
+        #     'HOST': config('DB_HOST'),
+        #     'PORT': '',
+        # }
+        'default': dj_database_url.config(default=config('DATABASE_URL'))
     }
+
+
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
