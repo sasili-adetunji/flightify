@@ -32,7 +32,7 @@ flightify is flight booking automation application.
 - Edit the `.env.sample` file and save it as `.env` 
 - Install the dependencies by running `pip install -r requirements.txt`
 - Start the app by running `python manage.py runserver`
-- Run test by running `python ../manage.py test`
+- Run test by running `tox`
 - Navigate to `localhost:8000`
 
 ### Technologies
